@@ -1,25 +1,21 @@
-/* media query
+/* grid
 ------------------------------------------------------------ */
-$screen-phone: 768px !default;
-$screen-phone-min: $screen-phone !default;
-
-$screen-desktop: 992px !default;
-$screen-desktop-min: $screen-desktop !default;
-
-$screen-large-desktop: 1800px !default;
-$screen-large-desktop-min: $screen-large-desktop !default;
-
-$screen-phone-max: ($screen-desktop-min - 1) !default;
-$screen-desktop-max: ($screen-large-desktop-min - 1) !default;
-
-$screen-min-list: (
-  phone: $screen-phone-min,
-  desktop: $screen-desktop-min,
+$grid-breakpoints: (
+        phone: 0,
+        desktop: 992px,
 );
 
-
-/* font
+/* spacing
 ------------------------------------------------------------ */
-$font-size-base: 10 !default;
+$spacers: (
+        0: 0,
+        1: 8px,
+        2: 16px,
+        3: 24px,
+        4: 32px,
+        5: 40px,
+);
 
-$line-height: 1.6;
+/* colors
+------------------------------------------------------------ */
+//$primary: #000;

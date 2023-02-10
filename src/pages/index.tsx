@@ -1,8 +1,8 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
+import {Inter} from '@next/font/google';
+import Head from 'next/head';
+import Image from 'next/image';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({subsets: ['latin']});
 
 export default function Home() {
   return (
@@ -13,22 +13,25 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main >
-          <Image
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
+      <main>
+        <div className="mt-5">
+          <div className="row g-desktop-5 align-items-center">
+            <div className="col-6">hoge</div>
+            <div className="col">hoge</div>
+            <div className="col">hoge</div>
+            <div className="col-6">hoge</div>
+            <div className="input-group">
+              <input type="number" className="form-control" />
+            </div>
+          </div>
+        </div>
+        <div className="alert alert-primary" role="alert">
+          This is a primary alert—check it out!
+        </div>
+        <button className="btn btn-primary">hoge</button>
+        <Image src="/next.svg" alt="Next.js Logo" width={180} height={37} priority />
+        <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
       </main>
     </>
-  )
+  );
 }
