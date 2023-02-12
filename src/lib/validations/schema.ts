@@ -1,4 +1,4 @@
-import {FieldErrors, FieldValues, Resolver, UnpackNestedValue} from 'react-hook-form';
+import {FieldErrors, FieldValues, Resolver} from 'react-hook-form';
 
 import {validate, Validator} from '@/lib/validations/validator';
 
@@ -16,7 +16,7 @@ export function createFormResolver<
   TFields extends FieldValues,
   TSchema extends ValidationSchema<TFields>
 >(schema: TSchema): Resolver<TFields> {
-  return async (values: UnpackNestedValue<TFields>) => {
+  return async (values) => {
     const errors = Object.keys(schema).reduce<FieldErrors<TFields>>((acc, key) => {
       const {rules = []} = schema[key] || {};
       const value = values[key];

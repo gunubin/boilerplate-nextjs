@@ -1,10 +1,11 @@
 import {useEffect} from 'react';
-import {useSystemInitializeUseCase} from "@/useCases/systemInitializeUseCase";
+
+import {useSystemInitializeUseCase} from '@/useCases/systemInitializeUseCase';
 
 export const useAppPage = () => {
-    const [systemInitialize] = useSystemInitializeUseCase();
+  const [systemInitialize] = useSystemInitializeUseCase();
 
-    useEffect(() => {
-        systemInitialize();
-    }, [systemInitialize]);
+  useEffect(() => {
+    systemInitialize();
+  }, [systemInitialize]);
 };

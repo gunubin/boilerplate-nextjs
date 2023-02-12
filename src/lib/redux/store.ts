@@ -1,9 +1,9 @@
 import {configureStore as rtkConfigureStore} from '@reduxjs/toolkit';
 import thunk from 'redux-thunk';
 
-import {appApi} from '@/adapters/domain/redux/appApi';
-import {modalPromiseMiddleware} from '@/adapters/services/modal/redux/modalPromiseMiddleware';
 import rootReducer from '@/lib/redux/rootReducer';
+import {modalPromiseMiddleware} from '@/services/app/modal/redux/modalPromiseMiddleware';
+import {appApi} from '@/services/domain/redux/appApi';
 
 const middlewares = [thunk, modalPromiseMiddleware, appApi.middleware];
 

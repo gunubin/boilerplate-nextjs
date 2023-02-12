@@ -1,5 +1,5 @@
-import {TodoItem} from "@/domain/todo/TodoItem";
+import {TodoItem} from '@/domain/todo/TodoItem';
 
 export interface ITodoList {
-    add(params: TodoItem): void;
+  add(params: TodoItem): void;
 }

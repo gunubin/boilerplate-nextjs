@@ -1,5 +1,5 @@
-import {createUseCaseFactory} from "@/lib/useCase/utils";
-import {ReduxProvider} from "@/lib/redux/ReduxProvider";
+import {ReduxProvider} from '@/lib/redux/ReduxProvider';
+import {createUseCaseFactory} from '@/lib/useCase/utils';
 
 export const useSystemInitializeUseCase = createUseCaseFactory(
   () => {

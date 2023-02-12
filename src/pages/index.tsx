@@ -1,8 +1,7 @@
-import {Inter} from '@next/font/google';
 import Head from 'next/head';
 import Image from 'next/image';
 
-const inter = Inter({subsets: ['latin']});
+import {TodoList} from '@/components/features/todo/TodoList';
 
 export default function Home() {
   return (
@@ -15,6 +14,7 @@ export default function Home() {
       </Head>
       <main>
         <div className="mt-5">
+          <TodoList />
           <div className="row g-desktop-5 align-items-center">
             <div className="col-6">hoge</div>
             <div className="col">hoge</div>

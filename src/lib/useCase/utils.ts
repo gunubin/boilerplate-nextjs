@@ -1,14 +1,11 @@
 import {useMemo, useState} from 'react';
 
-import {createErrorManager} from '@/adapters/services/error/ErrorManager';
-import {
-  transformApplicationError,
-  transformNetworkError,
-} from '@/adapters/services/error/errors';
-import {applicationErrorHandler, networkErrorHandler} from '@/adapters/services/error/handlers';
 import {ApiError} from '@/api/ApiError';
 import {ErrorDisplayType} from '@/lib/error/types';
 import {createUseCaseState} from '@/lib/useCase/useCaseState';
+import {createErrorManager} from '@/services/app/error/ErrorManager';
+import {transformApplicationError, transformNetworkError} from '@/services/app/error/errors';
+import {applicationErrorHandler, networkErrorHandler} from '@/services/app/error/handlers';
 
 type UseCase<TParams, TResult> = (params: TParams) => Promise<TResult | undefined>;
 type UseCaseFactoryResult<TParams, TResult> = [
