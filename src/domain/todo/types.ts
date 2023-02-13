@@ -1,5 +1,7 @@
-import {TodoItem} from '@/domain/todo/TodoItem';
+import {TodoId, Todo} from '@/domain/todo/Todo';
 
-export interface ITodoList {
-  add(params: TodoItem): void;
+export interface ITodoListService {
+  add(params: {item: Todo}): void;
+  update(params: {item: Todo}): void;
+  remove(params: {id: TodoId}): void;
 }

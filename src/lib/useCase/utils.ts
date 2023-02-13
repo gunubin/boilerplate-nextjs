@@ -14,7 +14,7 @@ type UseCaseFactoryResult<TParams, TResult> = [
 ];
 
 type UseCaseFactoryOptions = {
-  id: string; // TODO: 関数名を自動で取得するようにしないとuseCase名変更時に絶対バグる
+  id?: string; // TODO: 関数名を自動で取得するようにしないとuseCase名変更時に絶対バグる
   errorDisplayType?: ErrorDisplayType;
 };
 
@@ -25,14 +25,17 @@ export const createUseCaseFactory = <
   TResult = void
 >(
   useCseFactory: (deps: TDeps) => UseCase<TParams, TResult>,
-  options: UseCaseFactoryOptions
+  options?: UseCaseFactoryOptions
 ) => {
-  const {id} = options;
   return (deps: TDeps): UseCaseFactoryResult<TParams, TResult> => {
     const [isLoading, setIsLoading] = useState(false);
     const [fieldErrors, setFieldErrors] = useState<ApiError['fields']>(undefined);
     const useCaseState = createUseCaseState();
     const useCase = useCseFactory(deps);
+    const {id = useCase.name} = options || {};
+    if (!id) {
+      throw new Error('useCaseName is undefined.');
+    }
     const command = useMemo(
       () => async (params: TParams) => {
         try {

@@ -1,8 +1,7 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {InputHTMLAttributes, useEffect, useMemo, useState} from 'react';
 import {
   FieldError,
   FieldPath,
-  FieldValue,
   FieldValues,
   useForm as useReactHookForm,
   UseFormProps,
@@ -10,12 +9,12 @@ import {
 
 import {createFormResolver, ValidationSchema} from '@/lib/validations/schema';
 
-export type InputProps<Value = any> = {
+// TODO:
+export type InputProps = {
   name: string;
-  value: Value;
   hasError: boolean;
   error?: InputError;
-  onChange: (value: Value) => void;
+  onChange: InputHTMLAttributes<HTMLElement>['onChange'];
   onBlur: () => void;
 };
 
@@ -25,12 +24,10 @@ export type InputError = {
 };
 
 export type Fields<T> = {
-  [P in keyof T]: InputProps<T[P]>;
+  [P in keyof T]: InputProps;
 };
 
-// for react-native
-// react-native-webで作られたコンポーネントに使用する
-export function useFormForRN<
+export function useForm<
   TFieldValues extends FieldValues,
   TSchema extends ValidationSchema<TFieldValues>
 >(
@@ -42,11 +39,9 @@ export function useFormForRN<
   const {
     setValue,
     watch,
-    trigger,
     register,
-    formState: {isValid, errors, touchedFields},
+    formState: {isValid, errors},
     handleSubmit,
-    reset,
   } = useReactHookForm({
     ...options,
     mode: 'onChange',
@@ -56,13 +51,6 @@ export function useFormForRN<
 
   // Get all values
   const values = watch();
-
-  // Register all fields
-  useEffect(() => {
-    Object.keys(schema).forEach((name) => {
-      register(name as FieldPath<TFieldValues>);
-    });
-  }, [schema, register]);
 
   const initialFieldsErrorMessages = useMemo(() => {
     return (Object.keys(schema) as FieldPath<TFieldValues>[]).reduce<
@@ -94,41 +82,25 @@ export function useFormForRN<
           } as FieldError;
           const hasError = !!error?.message;
 
-          const onChange = (value: string | number) => {
-            setValue(name, value as FieldValue<TFieldValues>);
-            fieldsErrorMessages[name] = '';
-            setFieldsErrorMessages(fieldsErrorMessages);
-            trigger(name);
-          };
-          const onBlur = () => {
-            if (!touchedFields[name]) {
-              // NOTE: Cannot assign true due to DeepMap type definition problem
-              (touchedFields as Record<FieldPath<TFieldValues>, true>)[name] = true;
-            }
-            trigger(name);
-          };
+          const reg = register(name as FieldPath<TFieldValues>);
           return {
             ...acc,
             [name]: {
               ...(hasError && {error}),
               hasError,
-              name,
-              onBlur,
-              onChange,
-              value: values[name],
+              ...reg,
             },
           };
         },
         {} as Fields<TFieldValues>
       ),
-    [schema, setValue, trigger, values, errors, touchedFields, fieldsErrorMessages]
+    [register, schema, errors, fieldsErrorMessages]
   );
   return {
     errors,
     fields: fieldProps,
     handleSubmit,
     isValid,
-    reset,
     setValue,
     values,
   };
