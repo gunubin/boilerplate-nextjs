@@ -8,7 +8,9 @@ declare module "nextjs-routes" {
   export type Route =
     | StaticRoute<"/_app/hooks">
     | StaticRoute<"/api/hello">
-    | StaticRoute<"/">;
+    | StaticRoute<"/">
+    | DynamicRoute<"/todo/[todoId]", { "todoId": string }>
+    | StaticRoute<"/todo/hooks">;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

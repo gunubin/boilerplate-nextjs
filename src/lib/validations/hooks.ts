@@ -12,7 +12,7 @@ import {createFormResolver, ValidationSchema} from '@/lib/validations/schema';
 // TODO:
 export type InputProps = {
   name: string;
-  hasError: boolean;
+  // hasError: boolean;
   error?: InputError;
   onChange: InputHTMLAttributes<HTMLElement>['onChange'];
   onBlur: () => void;
@@ -87,7 +87,7 @@ export function useForm<
             ...acc,
             [name]: {
               ...(hasError && {error}),
-              hasError,
+              // hasError,
               ...reg,
             },
           };

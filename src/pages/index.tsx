@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 
+import {HomeLayout} from '@/components/features/layouts/HomeLayout';
 import {ConnectedTodoInputForm} from '@/components/features/todo/TodoInputForm';
 import {ConnectedTodoList} from '@/components/features/todo/TodoList';
 
@@ -13,14 +14,14 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
+      <HomeLayout>
         <div className="container">
           <div className="mt-5">
             <ConnectedTodoInputForm />
             <ConnectedTodoList />
           </div>
         </div>
-      </main>
+      </HomeLayout>
     </>
   );
 }

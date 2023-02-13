@@ -2,15 +2,16 @@ import React from 'react';
 
 type Props = {
   title: string;
+  onPressItem: () => void;
   onPressRemove: () => void;
 };
 
-export const TodoListItem: React.FC<Props> = ({onPressRemove, title}) => {
+export const TodoListItem: React.FC<Props> = ({onPressItem, onPressRemove, title}) => {
   return (
     <div className="list-group-item">
       <div className="row">
         <div className="col">
-          <div>{title}</div>
+          <div onClick={onPressItem}>{title}</div>
         </div>
         <div onClick={onPressRemove} className="col">
           削除

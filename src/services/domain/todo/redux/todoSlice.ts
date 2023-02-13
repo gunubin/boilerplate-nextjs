@@ -1,4 +1,4 @@
-import {createEntityAdapter, createSelector, createSlice} from '@reduxjs/toolkit';
+import {createEntityAdapter, createSlice} from '@reduxjs/toolkit';
 
 import {Todo} from '@/domain/todo/Todo';
 import {RootState} from '@/lib/redux/rootReducer';
@@ -20,6 +20,7 @@ const todoSlice = createSlice({
 
 export const todoSelectors = {
   selectAll: baseSelectors.selectAll,
+  selectById: baseSelectors.selectById,
 };
 export const {todoAdded, todoRemoved} = todoSlice.actions;
 export default todoSlice.reducer;
