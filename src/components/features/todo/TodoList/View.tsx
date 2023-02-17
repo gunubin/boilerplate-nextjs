@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {TodoListItem} from '@/components/ui/TodoListItem';
-import {Todo, TodoId} from '@/domain/todo/Todo';
+import {TodoListItem} from '@/components/features/todo/TodoListItem';
+import {Todo} from '@/domain/todo/Todo';
+import {TodoId} from '@/domain/todo/TodoId';
 
 type Props = {
   list: Todo[];
