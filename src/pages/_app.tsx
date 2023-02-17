@@ -5,7 +5,6 @@ import {ReactElement, ReactNode} from 'react';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 
-import {Header} from '@/components/features/navigation/Header';
 import {ReduxProvider} from '@/lib/redux/ReduxProvider';
 import {configureStore} from '@/lib/redux/store';
 import {useAppPage} from '@/pages/_app/hooks';

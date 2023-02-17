@@ -1,26 +1,45 @@
 import {FieldErrors, FieldValues, Resolver} from 'react-hook-form';
 
-import {validate, Validator} from '@/lib/validations/validator';
+import {required} from '@/lib/validations/rules';
+import {
+  FieldValuesBySchema,
+  RequiredOption,
+  ValidationSchema,
+  ValueObjectFieldValues,
+} from '@/lib/validations/types';
+import {createValidatorFromValueObject, validate, Validator} from '@/lib/validations/validator';
 
-export type ValidationSchema<
-  TFields extends FieldValues = any,
-  TFieldErrors = Record<string, string[]> /* FIXME: types */
-> = {
-  [key in keyof TFields]: {
-    errorQuery?: (fieldErrors: TFieldErrors) => string | undefined;
-    rules: Validator<any, TFields>[];
-  };
-};
+export function hasMessageRequiredOption(value: RequiredOption): value is {message: string} {
+  return typeof value === 'object';
+}
 
 export function createFormResolver<
-  TFields extends FieldValues,
-  TSchema extends ValidationSchema<TFields>
->(schema: TSchema): Resolver<TFields> {
+  TSchema extends ValidationSchema<TFields>,
+  TFields extends FieldValues = FieldValuesBySchema<TSchema>,
+  TValueObjectFieldValues extends FieldValues = ValueObjectFieldValues<TFields>
+>(schema: TSchema): Resolver<TValueObjectFieldValues> {
   return async (values) => {
     const errors = Object.keys(schema).reduce<FieldErrors<TFields>>((acc, key) => {
-      const {rules = []} = schema[key] || {};
+      let itemRules: Validator[] = [];
+      const field = schema[key] || {};
+      if (field.required) {
+        hasMessageRequiredOption(field.required)
+          ? itemRules.push(required(field.required.message))
+          : itemRules.push(required());
+      }
+      if ('valueObject' in field) {
+        itemRules = [
+          ...itemRules,
+          ...createValidatorFromValueObject({
+            messages: field.ruleMessages || {},
+            valueObject: field.valueObject,
+          }),
+        ];
+      }
       const value = values[key];
-      const results = rules.map((rule) => validate(rule, value, values)).filter((v) => !v.isValid);
+      const results = itemRules
+        .map((rule) => validate(rule, value, values))
+        .filter((v) => !v.isValid);
       const [{message = ''} = {}] = results;
       return {
         ...acc,
@@ -32,14 +51,25 @@ export function createFormResolver<
         }),
       };
     }, {} as FieldErrors<TFields>);
+
+    const valueObjectValues = Object.keys(schema).reduce<TFields>((acc, key) => {
+      const field = schema[key] || {};
+      const value = values[key];
+      if ('valueObject' in field) {
+        return {...acc, [key]: field.valueObject.create(value)};
+      } else {
+        return {...acc, [key]: value};
+      }
+    }, {} as TFields);
+
     const hasErrors = Object.keys(errors).length > 0;
     return {
       errors: hasErrors ? errors : {},
-      values,
+      values: valueObjectValues,
     };
   };
 }
 
-export function createSchema<T>(definitions: ValidationSchema<Record<keyof T, any>>) {
+export function createSchema<T extends FieldValues>(definitions: ValidationSchema<T>) {
   return definitions;
 }

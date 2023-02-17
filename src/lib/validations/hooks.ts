@@ -1,4 +1,4 @@
-import React, {InputHTMLAttributes, useEffect, useMemo, useState} from 'react';
+import React from 'react';
 import {
   FieldError,
   FieldPath,
@@ -7,34 +7,19 @@ import {
   UseFormProps,
 } from 'react-hook-form';
 
-import {createFormResolver, ValidationSchema} from '@/lib/validations/schema';
-
-// TODO:
-export type InputProps = {
-  name: string;
-  // hasError: boolean;
-  error?: InputError;
-  onChange: InputHTMLAttributes<HTMLElement>['onChange'];
-  onBlur: () => void;
-};
-
-export type InputError = {
-  type: string;
-  message: string;
-};
-
-export type Fields<T> = {
-  [P in keyof T]: InputProps;
-};
+import {createFormResolver} from '@/lib/validations/schema';
+import {
+  Fields,
+  FieldValuesBySchema,
+  ValidationSchema,
+  ValueObjectFieldValues,
+} from '@/lib/validations/types';
 
 export function useForm<
-  TFieldValues extends FieldValues,
-  TSchema extends ValidationSchema<TFieldValues>
->(
-  schema: TSchema,
-  options: Pick<UseFormProps<TFieldValues>, 'defaultValues'>,
-  externalFieldErrors?: Record<string, string[]>
-) {
+  TSchema extends ValidationSchema<TFieldValues>,
+  TFieldValues extends FieldValues = FieldValuesBySchema<TSchema>,
+  TValueObjectFieldValues extends FieldValues = ValueObjectFieldValues<TFieldValues>
+>(schema: TSchema, options?: Pick<UseFormProps<TValueObjectFieldValues>, 'defaultValues'>) {
   // Call react-hook-form
   const {
     setValue,
@@ -46,55 +31,34 @@ export function useForm<
     ...options,
     mode: 'onChange',
     reValidateMode: 'onChange',
-    resolver: createFormResolver(schema),
+    resolver: createFormResolver(schema as ValidationSchema<any> /*fixme: types*/),
   });
 
   // Get all values
   const values = watch();
 
-  const initialFieldsErrorMessages = useMemo(() => {
-    return (Object.keys(schema) as FieldPath<TFieldValues>[]).reduce<
-      Record<FieldPath<TFieldValues>, string>
-    >((acc, name) => {
-      const {errorQuery} = schema[name];
-      const fieldErrorMessage = externalFieldErrors && errorQuery?.(externalFieldErrors);
-      return {
-        ...acc,
-        [name]: fieldErrorMessage,
-      };
-    }, {} as Record<FieldPath<TFieldValues>, string>);
-  }, [externalFieldErrors, schema]);
-
-  const [fieldsErrorMessages, setFieldsErrorMessages] = useState(initialFieldsErrorMessages);
-
-  useEffect(() => {
-    setFieldsErrorMessages(initialFieldsErrorMessages);
-  }, [externalFieldErrors, initialFieldsErrorMessages]);
-
   const fieldProps = React.useMemo(
     () =>
-      (Object.keys(schema) as FieldPath<TFieldValues>[]).reduce<Fields<TFieldValues>>(
-        (acc, name) => {
-          const fieldErrorMessage = fieldsErrorMessages[name];
-          const error = {
-            ...errors[name],
-            ...(fieldErrorMessage && {message: fieldErrorMessage}),
-          } as FieldError;
-          const hasError = !!error?.message;
+      (Object.keys(schema) as FieldPath<TValueObjectFieldValues>[]).reduce<
+        Fields<TValueObjectFieldValues>
+      >((acc, name) => {
+        const error = {
+          ...errors[name],
+        } as FieldError;
+        const hasError = !!error?.message;
 
-          const reg = register(name as FieldPath<TFieldValues>);
-          return {
-            ...acc,
-            [name]: {
-              ...(hasError && {error}),
-              // hasError,
-              ...reg,
-            },
-          };
-        },
-        {} as Fields<TFieldValues>
-      ),
-    [register, schema, errors, fieldsErrorMessages]
+        const reg = register(name as FieldPath<TValueObjectFieldValues>);
+        return {
+          ...acc,
+          [name]: {
+            ...(hasError && {error}),
+            // hasError,
+            ...reg,
+          },
+        };
+      }, {} as Fields<TValueObjectFieldValues>),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [register, schema, errors, Object.keys(errors)]
   );
   return {
     errors,

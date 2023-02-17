@@ -1,10 +1,10 @@
-import {Validator} from '@/domain/lib/types';
+import {RuleCreator} from '@/domain/lib/types';
 
 /**
  * フォーマット
  * @param regexp - チェックしたい正規表現
  */
-export const format: Validator = (regexp: RegExp) => ({
+export const format: RuleCreator<'format'> = (regexp: RegExp) => ({
   name: 'format',
   validate: (val: string) => regexp.test(val),
 });
@@ -14,7 +14,7 @@ export const format: Validator = (regexp: RegExp) => ({
  *
  * @param length - 最大の長さ
  */
-export const maxLength: Validator = (length: number) => ({
+export const maxLength: RuleCreator<'maxLength'> = (length: number) => ({
   name: 'maxLength',
   validate: (val: string) => val.length <= length,
 });
@@ -24,7 +24,7 @@ export const maxLength: Validator = (length: number) => ({
  *
  * @param length - 最小の長さ
  */
-export const minLength: Validator = (length: number) => ({
+export const minLength: RuleCreator<'minLength'> = (length: number) => ({
   name: 'minLength',
   validate: (val: string) => val.length >= length,
 });
@@ -35,9 +35,12 @@ export const minLength: Validator = (length: number) => ({
  * @param kinds - 許容する文字列パターンのリスト
  * @param min - 最低現必要な種類の数
  */
-export const multipleKindChars: Validator = ({kinds, min}: {kinds: RegExp[]; min: number}) => ({
+export const multipleKindChars: RuleCreator<'multipleKindChars'> = (params: {
+  kinds: RegExp[];
+  min: number;
+}) => ({
   name: 'multipleKindChars',
   validate: (val: string) => {
-    return kinds.map((k) => k.test(val)).filter((t) => t).length >= min;
+    return params.kinds.map((k) => k.test(val)).filter((t) => t).length >= params.min;
   },
 });

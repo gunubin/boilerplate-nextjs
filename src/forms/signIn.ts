@@ -1,4 +1,4 @@
-import {required} from '@/forms/rules';
+import {required} from '@/lib/validations/rules';
 import {createSchema} from '@/lib/validations/schema';
 
 export type FormValues = {

@@ -1,3 +1,5 @@
+import {Rule, ValueObject} from '@/domain/lib/types';
+
 type ValidationMessage<TParams> = TParams extends void
   ? string
   : string | ((params: TParams) => string);
@@ -32,6 +34,7 @@ export type ValidatorFactory<TParams = any> = TParams extends void
 export type Validator<TParams = any, TFields = any> =
   | ValidatorFunction<TFields>
   | ValidatorObject<TParams, TFields>;
+
 type ValidatorFunction<TFields = any> = (value: any, values: TFields) => ValidationResult;
 type ValidatorObject<TParams = any, TFields = any> = TParams extends void
   ? {
@@ -88,7 +91,7 @@ export const createValidatorFactory = <TParams, TFields = any>({
       message = options;
     }
     return {
-      message: message || defaultValidationMessage,
+      message: message ?? defaultValidationMessage,
       params,
       type,
       validate(value: any, values: TFields) {
@@ -97,4 +100,22 @@ export const createValidatorFactory = <TParams, TFields = any>({
       },
     };
   }) as unknown as ValidatorFactory<TParams>;
+};
+
+export const createValidatorFromValueObject = <TValueObject extends ValueObject<any, Rule<any>[]>>({
+  valueObject,
+  messages,
+}: {
+  valueObject: TValueObject;
+  messages: Record<string, string>;
+}) => {
+  return (
+    valueObject.rules.map((rule) => {
+      return createValidatorFactory<void>({
+        message: messages[rule.name],
+        type: rule.name,
+        validate: rule.validate,
+      })();
+    }) || []
+  );
 };

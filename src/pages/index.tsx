@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import Image from 'next/image';
 
 import {HomeLayout} from '@/components/features/layouts/HomeLayout';
 import {ConnectedTodoInputForm} from '@/components/features/todo/TodoInputForm';
@@ -18,7 +17,9 @@ export default function Home() {
         <div className="container">
           <div className="mt-5">
             <ConnectedTodoInputForm />
-            <ConnectedTodoList />
+            <div className="mt-5">
+              <ConnectedTodoList />
+            </div>
           </div>
         </div>
       </HomeLayout>
