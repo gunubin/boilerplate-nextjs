@@ -1,4 +1,4 @@
-import {AppError, NetworkError, ValidError} from '@/services/app/error/errors';
+import {AppError, NetworkError} from '@/services/app/error/errors';
 import {ErrorHandler} from '@/services/app/error/types';
 
 export const applicationErrorHandler: ErrorHandler<AppError> = () => {
@@ -10,12 +10,6 @@ export const applicationErrorHandler: ErrorHandler<AppError> = () => {
 };
 
 export const networkErrorHandler: ErrorHandler<NetworkError> = (error) => {
-  if (
-    error.original.isValidationError() &&
-    (!error.base || error.base?.length === 0) // fieldsはあるが、baseがない場合はdialog表示しない
-  ) {
-    return undefined;
-  }
   if (error.status === 422) {
     return [
       {
@@ -30,28 +24,6 @@ export const networkErrorHandler: ErrorHandler<NetworkError> = (error) => {
       },
     ];
   }
-  return [
-    {
-      displayType: 'dialog',
-      message: 'サーバーでエラーが発生しました。少し時間をおいて再度お試しください。',
-      title: 'ネットワークエラー',
-    },
-    {
-      displayType: 'toast',
-      message: 'サーバーでエラーが発生しました。少し時間をおいて再度お試しください。',
-    },
-  ];
-};
-
-export const validErrorHandler: ErrorHandler<ValidError> = (error) => {
-  if (error.original.isValidationError()) {
-    return {
-      displayType: 'dialog',
-      message: error.fields?.join(' '),
-      title: '',
-    };
-  }
-
   return [
     {
       displayType: 'dialog',

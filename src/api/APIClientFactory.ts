@@ -1,4 +1,4 @@
-import {AxiosRequestConfig} from 'axios';
+import {AxiosRequestConfig, AxiosRequestHeaders} from 'axios';
 
 import {APIClient} from '@/api/APIClient';
 
@@ -17,11 +17,10 @@ export class APIClientFactory {
   async getBaseHeaders(config: AxiosRequestConfig) {
     config.headers = {
       ...config.headers,
-      Accept: config.headers?.['Accept'] || 'application/json',
-      'Accept-Language': config.headers?.['Accept-Language'] || 'ja-JP',
-      'Content-Type': config.headers?.['Content-Type'] || 'application/json',
+      Accept: 'application/json',
+      'Accept-Language': 'ja-JP',
+      'Content-Type': 'application/json',
     };
-    config.withCredentials = false; // TODO: サーバー側が実装されたらtrueにする
     return config;
   }
 
@@ -32,9 +31,11 @@ export class APIClientFactory {
     }
     const newClient = APIClient.create(apiBaseUrl);
     newClient.use(async (config) => {
+      // https://github.com/axios/axios/issues/5034#issuecomment-1408548737
+      // config.headers.setAuthorization
       config.headers = {
         ...config.headers,
-      };
+      } as AxiosRequestHeaders;
       const baseConfig = await this.getBaseHeaders(config);
       return {...baseConfig, ...config};
     });

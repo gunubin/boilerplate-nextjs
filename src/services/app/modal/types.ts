@@ -23,7 +23,7 @@ export interface IMessageDialog {
 }
 
 export interface IBlockingIndicator {
-  show(options?: {id?: string; isShowHeaderNavigation?: boolean}): void;
+  show(options?: {id?: string}): void;
 
   hide(options?: {id?: string}): void;
 

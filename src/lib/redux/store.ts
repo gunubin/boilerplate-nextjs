@@ -5,6 +5,7 @@ import thunk from 'redux-thunk';
 
 import rootReducer from '@/lib/redux/rootReducer';
 import {modalPromiseMiddleware} from '@/services/app/modal/redux/modalPromiseMiddleware';
+import {appApi} from '@/services/domain/redux/appApi';
 // import {appApi} from '@/services/domain/redux/appApi';
 
 // 永続化の設定
@@ -17,7 +18,7 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const middlewares = [thunk, modalPromiseMiddleware /*, appApi.middleware*/];
+const middlewares = [thunk, modalPromiseMiddleware , appApi.middleware];
 
 const store = rtkConfigureStore({
   middleware: middlewares,

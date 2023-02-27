@@ -1,14 +1,17 @@
 import React from 'react';
 
+type ButtonType = 'primary' | 'secondary';
+
 type Props = {
-  label: string;
-  onPress: () => void;
+  type?: ButtonType;
+  children: string;
+  onPress?: () => void;
 };
 
-export const Button: React.FC<Props> = ({label, onPress}) => {
+export const Button: React.FC<Props> = ({children, onPress, type= 'secondary'}) => {
   return (
-    <button className="btn btn-primary" onClick={onPress}>
-      {label}
+    <button className={`btn btn-${type}`} onClick={onPress}>
+      {children}
     </button>
   );
 };

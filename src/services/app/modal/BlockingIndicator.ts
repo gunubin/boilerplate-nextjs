@@ -14,9 +14,9 @@ export const createBlockingIndicator = (): IBlockingIndicator => {
       const targetId = id || indicator?.id;
       return targetId && redux.dispatch(actions.hid(targetId));
     },
-    show: ({id, isShowHeaderNavigation} = {}) => {
+    show: ({id} = {}) => {
       return redux.dispatch(
-        actions.showed(BlockingIndicatorPayload.create(id, isShowHeaderNavigation))
+        actions.showed(BlockingIndicatorPayload.create(id))
       );
     },
   };

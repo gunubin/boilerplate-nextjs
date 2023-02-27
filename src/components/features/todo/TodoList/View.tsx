@@ -5,13 +5,13 @@ import {Todo} from '@/domain/todo/Todo';
 import {TodoId} from '@/domain/todo/TodoId';
 
 type Props = {
-  list: Todo[];
+  list?: Todo[];
   onPressItem: (id: TodoId) => void;
   onPressRemove: (id: TodoId) => void;
 };
 
 export const TodoList: React.FC<Props> = ({list, onPressItem, onPressRemove}) => {
-  const items = list.map((item) => {
+  const items = list?.map((item) => {
     return (
       <TodoListItem
         key={item.id}

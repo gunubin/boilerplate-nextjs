@@ -1,4 +1,4 @@
-import {format, maxLength, minLength, multipleKindChars} from '../validators';
+import {format, maxLength, minLength, multipleKindChars} from '../rules';
 
 describe('@app/domain/lib/validators', () => {
   it('format()', () => {

@@ -6,11 +6,8 @@
 // prettier-ignore
 declare module "nextjs-routes" {
   export type Route =
-    | StaticRoute<"/_app/hooks">
-    | StaticRoute<"/api/hello">
     | StaticRoute<"/">
-    | DynamicRoute<"/todo/[todoId]", { "todoId": string }>
-    | StaticRoute<"/todo/hooks">;
+    | DynamicRoute<"/todo/[todoId]", { "todoId": string }>;
 
   interface StaticRoute<Pathname> {
     pathname: Pathname;

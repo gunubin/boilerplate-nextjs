@@ -1,17 +1,15 @@
-import {ApiError} from '@/api/ApiError';
 import {BaseError} from '@/lib/error/types';
-import {ErrorHandler, ErrorPayload, IErrorManager} from '@/services/app/error/types';
+import {
+  ErrorHandler,
+  ErrorPayload,
+  IErrorManager,
+} from '@/services/app/error/types';
 import {createMessageDialog} from '@/services/app/modal/MessageDialog';
 import {DialogLabels} from '@/services/app/modal/types';
 import {createToastManger} from '@/services/app/toast/ToastManager';
 
 const DEFAULT_ERROR_MESSAGE = 'アプリでエラーが発生しました。';
 const getErrorMessage = (error: BaseError, payload: ErrorPayload): string => {
-  if (error.original instanceof ApiError) {
-    const {base} = error.original;
-    const bases = base?.join('\n');
-    return bases || payload.message || DEFAULT_ERROR_MESSAGE;
-  }
   return payload.message || DEFAULT_ERROR_MESSAGE;
 };
 
@@ -36,7 +34,9 @@ export const createErrorManager = <TError extends BaseError>(
         const message = getErrorMessage(error, errorPayload);
         if (displayType === 'dialog') {
           const {actions, title} = errorPayload;
-          const labels = actions ? Object.keys(actions) : Object.keys(defaultAction);
+          const labels = actions
+            ? Object.keys(actions)
+            : Object.keys(defaultAction);
           const result = await messageDialog.show({
             labels: labels as any as DialogLabels, // TODO: ちゃんとやる
             message: message,

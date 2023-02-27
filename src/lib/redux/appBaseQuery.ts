@@ -2,10 +2,11 @@ import {BaseQueryFn} from '@reduxjs/toolkit/query';
 import {AxiosError} from 'axios';
 
 import {APIClientFactory} from '@/api/APIClientFactory';
-import {ApiError, AxiosErrorData} from '@/api/ApiError';
+import {ApiError} from '@/api/ApiError';
+import {ApiClientConfig} from '@/api/types';
 
 export const appBaseQuery =
-  (getBaseUrl: () => string): BaseQueryFn<Promise<any/*RequestArgs*/>, unknown, unknown> =>
+  (getBaseUrl: () => string): BaseQueryFn<ApiClientConfig, unknown, unknown> =>
   async (config) => {
     try {
       const baseUrl = getBaseUrl();
@@ -14,7 +15,7 @@ export const appBaseQuery =
       return {data: result};
     } catch (axiosError) {
       return {
-        error: ApiError.initWithAxiosError(axiosError as AxiosError<AxiosErrorData>),
+        error: ApiError.initWithAxiosError(axiosError as AxiosError),
       };
     }
   };

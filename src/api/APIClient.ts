@@ -1,10 +1,12 @@
-import axios, {AxiosInstance, AxiosRequestConfig} from 'axios';
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  InternalAxiosRequestConfig,
+} from 'axios';
 
-import {RequestArgs} from '@/api/gen/base';
+import {ApiClientConfig, Method} from '@/api/types';
 
 export class APIClient {
-  static instance: APIClient;
-
   static create(apiBaseUrl: string) {
     return new APIClient(axios.create(), apiBaseUrl);
   }
@@ -26,20 +28,29 @@ export class APIClient {
     // );
   }
 
-  use(interceptor: (config: AxiosRequestConfig) => Promise<AxiosRequestConfig>) {
+  use(
+    interceptor: (
+      config: InternalAxiosRequestConfig
+    ) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>
+  ) {
     this.axios.interceptors.request.use(interceptor);
   }
 
-  private makeConfig(config: AxiosRequestConfig, url: string): AxiosRequestConfig {
+  private makeConfig(config: ApiClientConfig, url: string): AxiosRequestConfig {
+    const isQueryParameter = isPreferQueryParameter(config.method);
     return {
-      ...config,
+      data: !isQueryParameter ? config.parameter : undefined,
+      headers: config.headers,
+      method: config.method,
+      params: isQueryParameter ? config.parameter : undefined,
       url,
     };
   }
 
-  async request(config: Promise<RequestArgs>): Promise<any /* FIXME: type */> {
-    const {options, url} = await config;
-    const axiosConfig = this.makeConfig(options, `${this.baseUrl}${url}`);
+  async request(config: ApiClientConfig): Promise<any /* FIXME: type */> {
+    const {path} = config;
+    const url = `${this.baseUrl}${path}`;
+    const axiosConfig = this.makeConfig(config, url);
 
     return new Promise((resolve, reject) => {
       this.axios(axiosConfig)
@@ -52,3 +63,14 @@ export class APIClient {
     });
   }
 }
+
+const isPreferQueryParameter = (method: Method) => {
+  switch (method) {
+    case 'GET':
+    case 'HEAD':
+    case 'DELETE':
+      return true;
+    default:
+      return false;
+  }
+};

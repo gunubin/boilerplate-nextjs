@@ -4,6 +4,6 @@ declare namespace NodeJS {
     type Env = typeof envNames;
     interface ProcessEnv extends Env {
         readonly NODE_ENV: 'development' | 'production' | 'test';
-        readonly API_BASE_URL: string;
+        readonly NEXT_PUBLIC_API_BASE_URL: string;
     }
 }

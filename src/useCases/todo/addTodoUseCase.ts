@@ -1,14 +1,15 @@
+
 import {Todo} from '@/domain/todo/Todo';
 import {createUseCaseFactory} from '@/lib/useCase/utils';
-import {createTodoList} from '@/services/domain/todo/TodoList';
+import {useTodoList} from '@/services/domain/todo/TodoList';
 
 type Params = {
     item: Todo;
 };
 
 export const useAddTodoUseCase = createUseCaseFactory<Params>(() => {
-    const todoList = createTodoList();
+    const todoList = useTodoList();
     return async function addTodoUseCase({item}) {
-        todoList.add({item})
+        await todoList.add({item})
     };
 });

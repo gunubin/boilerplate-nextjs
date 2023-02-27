@@ -1,23 +1,27 @@
 import {useRouter} from 'next/router';
 import {useEffect, useMemo} from 'react';
-import {useSelector} from 'react-redux';
 
 import {Todo} from '@/domain/todo/Todo';
 import {TodoId} from '@/domain/todo/TodoId';
 import {addTodoSchema} from '@/forms/addTodo';
-import {RootState} from '@/lib/redux/rootReducer';
+import {useIndicator} from '@/hooks/indicator';
+import {createQuery} from '@/lib/useCase/utils';
 import {useForm} from '@/lib/validations/hooks';
-import {todoSelectors} from '@/services/domain/todo/redux/todoSlice';
+import {useGetTodoQuery} from '@/services/domain/todo/redux/todoApi';
 import {useUpdateTodoUseCase} from '@/useCases/todo/updateTodoUseCase';
 
 export const useTodoEditForm = () => {
   const {
     query: {todoId = ''},
+    isReady
   } = useRouter();
   const id = TodoId.create(todoId as string);
-  const item = useSelector((state: RootState) => todoSelectors.selectById(state, id));
 
-  const [updateTodo] = useUpdateTodoUseCase();
+  const {data: item} = createQuery(useGetTodoQuery)(id, {skip: !isReady});
+
+  const [updateTodo, {isLoading}] = useUpdateTodoUseCase();
+
+  useIndicator(isLoading)
 
   const {fields, isValid, handleSubmit, setValue} = useForm(addTodoSchema, {
     defaultValues: {

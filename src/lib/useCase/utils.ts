@@ -1,16 +1,24 @@
-import {useMemo, useState} from 'react';
+import {TSTypeQuery} from '@babel/types';
+import {UseQueryStateResult} from '@reduxjs/toolkit/dist/query/react/buildHooks';
+import {QueryDefinition} from '@reduxjs/toolkit/query';
+import {UseQuery, UseQueryHookResult} from '@reduxjs/toolkit/src/query/react/buildHooks';
+import {useErrorHandler} from 'next/dist/client/components/react-dev-overlay/internal/helpers/use-error-handler';
+import {useEffect, useMemo, useState} from 'react';
 
 import {ApiError} from '@/api/ApiError';
+import {useErrorDisplay} from '@/hooks/error';
+import {useIndicator} from '@/hooks/indicator';
 import {ErrorDisplayType} from '@/lib/error/types';
 import {createUseCaseState} from '@/lib/useCase/useCaseState';
 import {createErrorManager} from '@/services/app/error/ErrorManager';
 import {transformApplicationError, transformNetworkError} from '@/services/app/error/errors';
 import {applicationErrorHandler, networkErrorHandler} from '@/services/app/error/handlers';
+import {createBlockingIndicator} from '@/services/app/modal/BlockingIndicator';
 
 type UseCase<TParams, TResult> = (params: TParams) => Promise<TResult | undefined>;
 type UseCaseFactoryResult<TParams, TResult> = [
   UseCase<TParams, TResult>,
-  {fieldErrors?: ApiError['fields']; isLoading: boolean}
+  {isLoading: boolean}
 ];
 
 type UseCaseFactoryOptions = {
@@ -29,7 +37,6 @@ export const createUseCaseFactory = <
 ) => {
   return (deps: TDeps): UseCaseFactoryResult<TParams, TResult> => {
     const [isLoading, setIsLoading] = useState(false);
-    const [fieldErrors, setFieldErrors] = useState<ApiError['fields']>(undefined);
     const useCaseState = createUseCaseState();
     const useCase = useCseFactory(deps);
     const {id = useCase.name} = options || {};
@@ -47,9 +54,6 @@ export const createUseCaseFactory = <
         } catch (error) {
           useCaseState.fail({error, id});
           if (error instanceof ApiError) {
-            if (error.isValidationError()) {
-              setFieldErrors(error.fields);
-            }
             const errorManager = createErrorManager(networkErrorHandler);
             errorManager.show({
               error: transformNetworkError(error),
@@ -70,6 +74,28 @@ export const createUseCaseFactory = <
       },
       [] // eslint-disable-line react-hooks/exhaustive-deps
     );
-    return [command, {fieldErrors, isLoading}];
+    return [command, {isLoading}];
+  };
+};
+
+/*
+ * usage: const getUser = createQuery(useGetUserQuery);
+ * useErrorDisplayとuseIndicatorのみなので不要かも
+ */
+export const createQuery = <
+  TQuery extends UseQuery<QueryDefinition<any, any, any, any>>,
+>(
+  query: TQuery,
+  options?: {
+    indicator?: boolean;
+  }
+) => {
+  const {indicator = false} = options || {};
+  return (...args: Parameters<typeof query>) => {
+    // eslint-disable-next-line prefer-spread
+    const ret = query.apply(null, args);
+    useErrorDisplay(ret.error)
+    useIndicator(indicator && ret.isLoading)
+    return ret;
   };
 };

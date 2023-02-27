@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormValues} from '@/forms/addTodo';
-import {Fields} from '@/lib/validations/hooks';
+import {Fields} from '@/lib/validations/types';
 
 type Props = {
   fields: Fields<FormValues>;

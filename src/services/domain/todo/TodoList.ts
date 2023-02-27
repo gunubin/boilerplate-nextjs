@@ -1,18 +1,23 @@
 import {ITodoListService} from '@/domain/todo/types';
-import {ReduxProvider} from '@/lib/redux/ReduxProvider';
-import {todoAdded, todoRemoved} from '@/services/domain/todo/redux/todoSlice';
+import {
+  useCreateTodoMutation,
+  useDeleteTodoMutation,
+  useUpdateTodoMutation,
+} from '@/services/domain/todo/redux/todoApi';
 
-export const createTodoList = (): ITodoListService => {
-  const redux = ReduxProvider.create();
+export const useTodoList = (): ITodoListService => {
+  const [createTodo] = useCreateTodoMutation();
+  const [deleteTodo] = useDeleteTodoMutation();
+  const [updateTodo] = useUpdateTodoMutation();
   return {
     add: async ({item}) => {
-      redux.dispatch(todoAdded(item));
+      return createTodo(item).unwrap();
     },
     remove: async ({id}) => {
-      redux.dispatch(todoRemoved(id));
+      return deleteTodo(id).unwrap();
     },
     update: ({item}) => {
-      redux.dispatch(todoAdded(item));
+      return updateTodo(item).unwrap();
     },
   };
 };

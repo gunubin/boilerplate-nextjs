@@ -2,13 +2,16 @@ import {useMemo} from 'react';
 
 import {Todo} from '@/domain/todo/Todo';
 import {addTodoSchema} from '@/forms/addTodo';
+import {useIndicator} from '@/hooks/indicator';
 import {useForm} from '@/lib/validations/hooks';
 import {useAddTodoUseCase} from '@/useCases/todo/addTodoUseCase';
 
 export const useTodoInputForm = () => {
-  const [addTodo] = useAddTodoUseCase();
+  const [addTodo, {isLoading}] = useAddTodoUseCase();
 
-  const {fields, isValid, handleSubmit, errors} = useForm(addTodoSchema, {
+  useIndicator(isLoading)
+
+  const {fields, isValid, handleSubmit} = useForm(addTodoSchema, {
     defaultValues: {
       description: '',
       title: '',
